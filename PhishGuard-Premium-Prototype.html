@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScamRay Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060810;
+  --s1: #0c0f1a;
+  --s2: #121624;
+  --s3: #181e2e;
+  --border: #1e2640;
+  --accent: #6C63FF;
+  --accent2: #4A43CC;
+  --gold: #F5A623;
+  --gold2: #E8920F;
+  --safe: #00E5A0;
+  --warn: #FFB800;
+  --danger: #FF4560;
+  --text: #E8EDF8;
+  --muted: #4A5568;
+  --muted2: #2D3748;
+  --aditya: #A78BFA;
+  --aditya2: #7C3AED;
+  --senior: #FB923C;
+  --sans: 'Outfit', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { height:100%; overflow:hidden; background:var(--bg); }
+body { font-family:var(--sans); display:flex; align-items:center; justify-content:center; }
+
+/* ── Animated background ── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 600px 400px at 20% 20%, rgba(108,99,255,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 400px at 80% 80%, rgba(167,139,250,0.04) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+/* ── Phone ── */
+.phone {
+  width:390px; height:844px;
+  background:var(--s1);
+  border-radius:52px;
+  border:1.5px solid #1a1f35;
+  overflow:hidden;
+  position:relative;
+  display:flex; flex-direction:column;
+  box-shadow:
+    0 80px 200px rgba(0,0,0,0.9),
+    0 0 0 1px rgba(255,255,255,0.04) inset,
+    0 1px 0 rgba(255,255,255,0.06) inset;
+}
+
+/* Dynamic island */
+.di {
+  position:absolute; top:12px; left:50%; transform:translateX(-50%);
+  width:120px; height:34px;
+  background:#000; border-radius:20px; z-index:20;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.di-cam { width:10px; height:10px; background:#1a1a1a; border-radius:50%; border:1.5px solid #111; }
+.di-dot { width:7px; height:7px; background:#1a1a1a; border-radius:50%; }
+
+/* Status bar */
+.sbar {
+  height:58px; background:var(--bg);
+  display:flex; align-items:flex-end; justify-content:space-between;
+  padding:0 26px 10px; flex-shrink:0;
+  font-family:var(--mono); font-size:11px; color:var(--muted);
+}
+
+/* Screens */
+.screen { flex:1; overflow:hidden; display:none; flex-direction:column; }
+.screen.active { display:flex; }
+.scroll { flex:1; overflow-y:auto; scrollbar-width:none; }
+.scroll::-webkit-scrollbar { display:none; }
+
+/* Bottom Nav */
+.bnav {
+  height:80px; background:rgba(6,8,16,0.96);
+  border-top:1px solid var(--border);
+  display:flex; padding-bottom:12px;
+  flex-shrink:0; backdrop-filter:blur(20px);
+  position:relative;
+}
+.bnav::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(108,99,255,0.4),rgba(167,139,250,0.4),transparent);
+}
+.bni {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:3px;
+  cursor:pointer; transition:all 0.2s; padding-top:10px;
+}
+.bni .ico { font-size:20px; transition:transform 0.2s; }
+.bni span { font-size:9px; color:var(--muted); letter-spacing:0.5px; transition:color 0.2s; }
+.bni.active .ico { transform:scale(1.15); }
+.bni.active span { color:var(--accent); }
+.bni.active { position:relative; }
+.bni.active::after {
+  content:''; position:absolute; bottom:0;
+  width:24px; height:2px;
+  background:var(--accent);
+  border-radius:2px;
+}
+
+/* ═══ PREMIUM BADGE ═══ */
+.premium-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 8px; border-radius:20px;
+  background:linear-gradient(135deg,rgba(245,166,35,0.15),rgba(245,166,35,0.05));
+  border:1px solid rgba(245,166,35,0.3);
+  font-size:10px; font-weight:700; color:var(--gold);
+  letter-spacing:1px;
+}
+
+/* ═══ CARDS ═══ */
+.card {
+  background:var(--s2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+}
+.card-glow-purple {
+  border-color:rgba(108,99,255,0.3);
+  box-shadow:0 0 30px rgba(108,99,255,0.08);
+}
+.card-glow-gold {
+  border-color:rgba(245,166,35,0.3);
+  box-shadow:0 0 30px rgba(245,166,35,0.08);
+}
+
+/* ═══ SCORE RING ═══ */
+.score-ring-wrap {
+  margin:0 20px 16px;
+  background:linear-gradient(145deg,#0a0f1f,#060a14);
+  border:1px solid rgba(108,99,255,0.2);
+  border-radius:22px; padding:22px;
+  display:flex; flex-direction:column; align-items:center;
+  position:relative; overflow:hidden;
+}
+.score-ring-wrap::before {
+  content:''; position:absolute;
+  top:-60px; left:-60px; width:240px; height:240px;
+  background:radial-gradient(circle,rgba(108,99,255,0.07) 0%,transparent 70%);
+}
+
+/* ═══ ADITYA AI ═══ */
+.aditya-card {
+  margin:0 20px 14px;
+  background:linear-gradient(135deg,rgba(124,58,237,0.12),rgba(167,139,250,0.06));
+  border:1px solid rgba(167,139,250,0.25);
+  border-radius:18px; padding:18px;
+  position:relative; overflow:hidden;
+}
+.aditya-card::before {
+  content:''; position:absolute;
+  top:-30px; right:-30px; width:120px; height:120px;
+  background:radial-gradient(circle,rgba(167,139,250,0.15) 0%,transparent 70%);
+}
+.aditya-avatar {
+  width:44px; height:44px; border-radius:14px;
+  background:linear-gradient(135deg,var(--aditya2),var(--aditya));
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0;
+  box-shadow:0 4px 16px rgba(124,58,237,0.4);
+}
+.aditya-pulse {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--safe); flex-shrink:0;
+  box-shadow:0 0 8px var(--safe);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.85)} }
+
+/* ═══ CHAT BUBBLES ═══ */
+.chat-wrap { padding:0 16px; display:flex; flex-direction:column; gap:10px; }
+.bubble-ai {
+  background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(167,139,250,0.08));
+  border:1px solid rgba(167,139,250,0.2);
+  border-radius:4px 16px 16px 16px;
+  padding:12px 14px; max-width:85%;
+  align-self:flex-start;
+}
+.bubble-user {
+  background:linear-gradient(135deg,rgba(108,99,255,0.2),rgba(108,99,255,0.1));
+  border:1px solid rgba(108,99,255,0.25);
+  border-radius:16px 4px 16px 16px;
+  padding:12px 14px; max-width:85%;
+  align-self:flex-end;
+}
+.bubble-text { font-size:13px; color:var(--text); line-height:1.5; }
+.bubble-time { font-size:10px; color:var(--muted); margin-top:4px; font-family:var(--mono); }
+
+/* ═══ THREAT CARD ═══ */
+.tcard {
+  margin:0 20px; background:var(--s2);
+  border:1px solid var(--border);
+  border-radius:16px; padding:14px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:all 0.2s;
+  position:relative; overflow:hidden;
+}
+.tcard:hover { transform:translateX(3px); }
+.tcard.danger { border-color:rgba(255,69,96,0.3); }
+.tcard.warn   { border-color:rgba(255,184,0,0.3); }
+.tcard.safe   { border-color:rgba(0,229,160,0.15); }
+.tcard::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; border-radius:3px 0 0 3px;
+}
+.tcard.danger::before { background:var(--danger); }
+.tcard.warn::before   { background:var(--warn); }
+.tcard.safe::before   { background:var(--safe); }
+
+/* ═══ SENIOR MODE ═══ */
+.senior-card {
+  margin:0 20px 14px;
+  background:linear-gradient(135deg,rgba(251,146,60,0.12),rgba(251,146,60,0.05));
+  border:1px solid rgba(251,146,60,0.3);
+  border-radius:18px; padding:18px;
+}
+.senior-toggle {
+  width:52px; height:28px;
+  background:var(--accent); border-radius:14px;
+  position:relative; cursor:pointer; transition:background 0.25s; flex-shrink:0;
+}
+.senior-toggle.off { background:var(--border); }
+.senior-toggle::after {
+  content:''; position:absolute;
+  width:22px; height:22px; background:#fff;
+  border-radius:50%; top:3px; right:3px;
+  transition:right 0.25s, left 0.25s;
+}
+.senior-toggle.off::after { right:auto; left:3px; }
+
+/* ═══ LOCATION CARD ═══ */
+.loc-card {
+  margin:0 20px 14px;
+  background:linear-gradient(135deg,rgba(0,229,160,0.08),rgba(0,229,160,0.03));
+  border:1px solid rgba(0,229,160,0.2);
+  border-radius:18px; padding:16px;
+}
+
+/* ═══ SCAN AREA ═══ */
+.scan-input {
+  margin:0 20px 14px;
+  width:calc(100% - 40px);
+  background:var(--s3); border:1px solid var(--border);
+  border-radius:16px; padding:14px 16px;
+  color:var(--text); font-family:var(--mono); font-size:12px;
+  outline:none; resize:none; transition:border-color 0.2s; line-height:1.5;
+}
+.scan-input:focus { border-color:var(--accent); }
+.scan-input::placeholder { color:var(--muted); }
+
+.scan-btn {
+  margin:0 20px; width:calc(100% - 40px); height:52px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none; border-radius:16px; color:#fff;
+  font-family:var(--sans); font-size:14px; font-weight:700;
+  letter-spacing:1px; cursor:pointer; transition:all 0.2s;
+  position:relative; overflow:hidden;
+}
+.scan-btn::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);
+}
+.scan-btn:hover { opacity:0.9; transform:translateY(-1px); }
+
+/* ═══ RESULT ═══ */
+.result-panel {
+  margin:14px 20px 0; border-radius:18px; padding:18px;
+  display:none; animation:slideUp 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.result-panel.show { display:block; }
+.result-panel.danger { background:rgba(255,69,96,0.07); border:1px solid rgba(255,69,96,0.3); }
+.result-panel.warn   { background:rgba(255,184,0,0.07); border:1px solid rgba(255,184,0,0.3); }
+.result-panel.safe   { background:rgba(0,229,160,0.05); border:1px solid rgba(0,229,160,0.2); }
+
+/* ═══ LANGUAGE TOGGLE ═══ */
+.lang-toggle {
+  display:flex; gap:4px;
+  background:var(--s3); border:1px solid var(--border);
+  border-radius:10px; padding:3px;
+}
+.lang-btn {
+  padding:4px 10px; border-radius:7px; border:none; cursor:pointer;
+  font-family:var(--sans); font-size:11px; font-weight:600;
+  background:transparent; color:var(--muted); transition:all 0.2s;
+}
+.lang-btn.active { background:var(--accent); color:#fff; }
+
+/* ═══ EMERGENCY NUMBERS ═══ */
+.emer-card {
+  background:var(--s3); border:1px solid var(--border);
+  border-radius:12px; padding:12px 14px;
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:8px;
+}
+.emer-num { font-size:14px; font-weight:700; color:var(--text); flex:1; font-family:var(--mono); }
+.call-btn {
+  padding:6px 12px; border:none; border-radius:8px;
+  background:rgba(0,229,160,0.15); color:var(--safe);
+  font-size:11px; font-weight:700; cursor:pointer;
+  font-family:var(--sans);
+}
+
+/* ═══ SETTINGS ═══ */
+.set-row {
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:12px; padding:14px 16px;
+  display:flex; align-items:center; gap:12px; margin-bottom:8px;
+}
+
+/* Progress bar */
+.prog-track { height:4px; background:var(--border); border-radius:4px; overflow:hidden; margin-bottom:6px; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--aditya)); width:0%; transition:width 0.15s; border-radius:4px; }
+.prog-lbl { font-family:var(--mono); font-size:10px; color:var(--muted); }
+
+/* Typing dots */
+.typing { display:flex; gap:4px; align-items:center; padding:4px 0; }
+.typing span {
+  width:6px; height:6px; background:var(--aditya);
+  border-radius:50%; animation:bounce 1.2s infinite;
+}
+.typing span:nth-child(2) { animation-delay:0.2s; }
+.typing span:nth-child(3) { animation-delay:0.4s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+/* Stat card */
+.stat { background:var(--s2); border:1px solid var(--border); border-radius:14px; padding:12px 10px; text-align:center; }
+
+/* Section title */
+.sec-title { font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; }
+
+/* Glow line */
+.glow-line {
+  height:1px; margin:0 20px;
+  background:linear-gradient(90deg,transparent,rgba(108,99,255,0.4),transparent);
+  margin-bottom:16px;
+}
+
+/* Channel tabs */
+.ch { flex:1; padding:10px 6px; background:var(--s2); border:1px solid var(--border); border-radius:12px; text-align:center; cursor:pointer; transition:all 0.2s; color:var(--muted); }
+.ch:hover { border-color:rgba(108,99,255,0.3); }
+.ch.active { background:rgba(108,99,255,0.1); border-color:var(--accent); color:var(--accent); }
+.ch .ci { font-size:18px; display:block; margin-bottom:3px; }
+.ch .cl { font-size:10px; font-weight:600; font-family:var(--mono); }
+
+/* Action btn */
+.act-btn { flex:1; padding:10px 6px; border:none; border-radius:10px; font-family:var(--sans); font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.act-btn:hover { opacity:0.85; transform:translateY(-1px); }
+.act-block  { background:rgba(255,69,96,0.18); color:var(--danger); }
+.act-report { background:rgba(108,99,255,0.15); color:var(--accent); }
+.act-dismiss{ background:rgba(255,255,255,0.06); color:var(--muted); }
+
+/* Aditya explain btn */
+.aditya-explain-btn {
+  width:100%; padding:11px; border:none; border-radius:10px;
+  background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(167,139,250,0.1));
+  border:1px solid rgba(167,139,250,0.25);
+  color:var(--aditya); font-family:var(--sans); font-size:12px; font-weight:700;
+  cursor:pointer; margin-top:10px; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.aditya-explain-btn:hover { border-color:var(--aditya); }
+
+/* SOS button */
+.sos-btn {
+  width:100%; height:56px; border:none; border-radius:16px;
+  background:linear-gradient(135deg,var(--danger),#CC2244);
+  color:#fff; font-family:var(--sans); font-size:18px; font-weight:800;
+  cursor:pointer; letter-spacing:3px;
+  box-shadow:0 4px 20px rgba(255,69,96,0.4);
+  animation:sos-pulse 2s infinite;
+}
+@keyframes sos-pulse { 0%,100%{box-shadow:0 4px 20px rgba(255,69,96,0.4)} 50%{box-shadow:0 4px 32px rgba(255,69,96,0.7)} }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="di"><div class="di-cam"></div><div class="di-dot"></div></div>
+
+  <!-- Status bar -->
+  <div class="sbar">
+    <span>9:41</span>
+    <div style="display:flex;gap:6px;align-items:center;font-size:11px;">
+      <span>▌▌▌▌</span><span>◀</span><span>89%</span>
+    </div>
+  </div>
+
+  <!-- ═══════════ DASHBOARD ═══════════ -->
+  <div class="screen active" id="s-home">
+    <div class="scroll">
+
+      <!-- Header -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px 8px;">
+        <div>
+          <div style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;">
+            Scam<span style="color:var(--accent)">Ray</span>
+          </div>
+          <div style="font-size:11px;color:var(--safe);font-family:var(--mono);margin-top:1px;">● Protection Active</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <!-- Language toggle -->
+          <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLang('EN')">EN</button>
+            <button class="lang-btn" onclick="setLang('HI')">हि</button>
+          </div>
+          <div class="premium-badge">✦ PRO</div>
+        </div>
+      </div>
+
+      <div class="glow-line"></div>
+
+      <!-- Score ring -->
+      <div class="score-ring-wrap">
+        <div class="sec-title" style="margin-bottom:14px;">SYSTEM PROTECTION SCORE</div>
+        <div style="position:relative;width:130px;height:130px;margin-bottom:12px;">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="54" stroke="#1a2040" stroke-width="10" fill="none"/>
+            <circle cx="65" cy="65" r="54" stroke="url(#scoreGrad)" stroke-width="10" fill="none"
+              stroke-dasharray="339" stroke-dashoffset="68" stroke-linecap="round" transform="rotate(-90,65,65)"/>
+            <defs>
+              <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#6C63FF"/>
+                <stop offset="100%" stop-color="#00E5A0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+            <div style="font-size:40px;font-weight:800;background:linear-gradient(135deg,#6C63FF,#00E5A0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">87</div>
+            <div style="font-size:11px;color:var(--muted);font-family:var(--mono);">/100</div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:var(--safe);letter-spacing:3px;font-family:var(--mono);">✓ PROTECTED</div>
+      </div>
+
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 20px 16px;">
+        <div class="stat"><span style="font-size:26px;font-weight:800;color:var(--accent);display:block;">142</span><span class="sec-title" style="font-size:8px;">SCANNED</span></div>
+        <div class="stat"><span style="font-size:26px;font-weight:800;color:var(--danger);display:block;">7</span><span class="sec-title" style="font-size:8px;">BLOCKED</span></div>
+        <div class="stat"><span style="font-size:26px;font-weight:800;color:var(--warn);display:block;">3</span><span class="sec-title" style="font-size:8px;">WARNINGS</span></div>
+      </div>
+
+      <!-- Aditya AI Quick Card -->
+      <div class="aditya-card" onclick="switchScreen('aditya')" style="cursor:pointer;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div class="aditya-avatar">🤖</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:700;color:var(--text);">Aditya AI</div>
+            <div style="font-size:11px;color:var(--aditya);font-family:var(--mono);">Your security assistant</div>
+          </div>
+          <div class="aditya-pulse"></div>
+        </div>
+        <div style="background:rgba(167,139,250,0.08);border-radius:10px;padding:10px 12px;">
+          <div style="font-size:12px;color:var(--text);line-height:1.5;" id="aditya-preview">
+            "Aaj 2 phishing attempts detect hue. Ek SMS mein fake bank link tha. 
+            <span style="color:var(--aditya);">Tap to see full report →</span>"
+          </div>
+        </div>
+      </div>
+
+      <!-- Location Card -->
+      <div class="loc-card">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:22px;">📍</span>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Location Protection</div>
+            <div style="font-size:11px;color:var(--muted);font-family:var(--mono);">Gorakhpur, UP · Active</div>
+          </div>
+          <div class="senior-toggle" onclick="this.classList.toggle('off')" style="background:var(--safe);"></div>
+        </div>
+      </div>
+
+      <!-- Senior Mode Banner -->
+      <div class="senior-card" style="cursor:pointer;" onclick="switchScreen('senior')">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:26px;">👴</span>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:700;color:var(--text);">Senior Citizen Mode</div>
+            <div style="font-size:11px;color:var(--muted);">Easy interface · Emergency numbers · Loud alerts</div>
+          </div>
+          <span style="color:var(--senior);font-size:16px;">›</span>
+        </div>
+      </div>
+
+      <!-- Scan Now Button -->
+      <button class="scan-btn" onclick="switchScreen('scan')" style="margin-bottom:16px;">
+        ⚡ SCAN NOW
+      </button>
+
+      <!-- Recent Activity -->
+      <div class="sec-title" style="padding:0 20px;margin-bottom:10px;">RECENT ACTIVITY</div>
+      <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:16px;">
+        <div class="tcard danger">
+          <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,69,96,0.12);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">📧</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">security@paypa1.com</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">Account suspended phish</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="background:rgba(255,69,96,0.18);color:var(--danger);font-size:8px;font-weight:700;padding:3px 7px;border-radius:5px;font-family:var(--mono);margin-bottom:3px;">MALICIOUS</div>
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);">2m ago</div>
+          </div>
+        </div>
+        <div class="tcard warn">
+          <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,184,0,0.12);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">💬</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:700;color:var(--text);">+91 98765 XXXXX</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">Prize winner smishing</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="background:rgba(255,184,0,0.15);color:var(--warn);font-size:8px;font-weight:700;padding:3px 7px;border-radius:5px;font-family:var(--mono);margin-bottom:3px;">SUSPICIOUS</div>
+            <div style="font-size:10px;color:var(--muted);font-family:var(--mono);">1h ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bnav">
+      <div class="bni active" onclick="switchScreen('home')"><span class="ico">📊</span><span>HOME</span></div>
+      <div class="bni" onclick="switchScreen('scan')"><span class="ico">🔍</span><span>SCAN</span></div>
+      <div class="bni" onclick="switchScreen('aditya')"><span class="ico">🤖</span><span>ADITYA</span></div>
+      <div class="bni" onclick="switchScreen('senior')"><span class="ico">👴</span><span>SENIOR</span></div>
+      <div class="bni" onclick="switchScreen('settings')"><span class="ico">⚙️</span><span>MORE</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SCANNER ═══════════ -->
+  <div class="screen" id="s-scan">
+    <div class="scroll" style="padding-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px;">
+        <div style="font-size:22px;font-weight:800;color:var(--text);">Scan Content</div>
+        <span style="font-size:22px;">🔍</span>
+      </div>
+
+      <!-- Channel tabs -->
+      <div style="display:flex;gap:8px;margin:0 20px 16px;">
+        <div class="ch active" onclick="setActiveCh(this)"><span class="ci">🔗</span><span class="cl">URL</span></div>
+        <div class="ch" onclick="setActiveCh(this)"><span class="ci">💬</span><span class="cl">SMS</span></div>
+        <div class="ch" onclick="setActiveCh(this)"><span class="ci">📧</span><span class="cl">EMAIL</span></div>
+      </div>
+
+      <textarea class="scan-input" id="scanInput" rows="4" placeholder="Paste URL, SMS text, or email body here..."></textarea>
+
+      <button class="scan-btn" id="scanBtn" onclick="doScan()">⚡ ANALYZE THREAT</button>
+
+      <!-- Progress -->
+      <div id="progWrap" style="padding:10px 20px 0;display:none;">
+        <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+        <div class="prog-lbl" id="progLbl">Initializing...</div>
+      </div>
+
+      <!-- Result -->
+      <div class="result-panel" id="resultPanel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span id="rIcon" style="font-size:26px;">🚨</span>
+            <div id="rVerdict" style="font-size:22px;font-weight:800;color:var(--danger);">MALICIOUS</div>
+          </div>
+          <div style="text-align:right;">
+            <div id="rConf" style="font-size:20px;font-weight:800;color:var(--danger);font-family:var(--mono);">94%</div>
+            <div style="font-size:10px;color:var(--muted);">confidence</div>
+          </div>
+        </div>
+
+        <!-- Risk bar -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <span style="font-size:10px;color:var(--muted);width:65px;">Risk Score</span>
+          <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+            <div id="riskFill" style="height:100%;border-radius:3px;background:var(--danger);width:0%;transition:width 0.8s;"></div>
+          </div>
+          <span id="riskVal" style="font-size:10px;font-family:var(--mono);color:var(--danger);">94/100</span>
+        </div>
+
+        <!-- Reasons -->
+        <div class="sec-title" style="margin-bottom:8px;">DETECTION REASONS</div>
+        <div id="reasonsList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"></div>
+
+        <!-- Action buttons -->
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <button class="act-btn act-block" id="blockBtn">🚫 Block</button>
+          <button class="act-btn act-report" onclick="this.innerHTML='✓ Sent'">📤 Report</button>
+          <button class="act-btn act-dismiss" onclick="hideResult()">✕ Dismiss</button>
+        </div>
+
+        <!-- Aditya Explain Button -->
+        <button class="aditya-explain-btn" onclick="adityaExplain()">
+          🤖 Ask Aditya AI to explain this
+        </button>
+      </div>
+    </div>
+
+    <div class="bnav">
+      <div class="bni" onclick="switchScreen('home')"><span class="ico">📊</span><span>HOME</span></div>
+      <div class="bni active" onclick="switchScreen('scan')"><span class="ico">🔍</span><span>SCAN</span></div>
+      <div class="bni" onclick="switchScreen('aditya')"><span class="ico">🤖</span><span>ADITYA</span></div>
+      <div class="bni" onclick="switchScreen('senior')"><span class="ico">👴</span><span>SENIOR</span></div>
+      <div class="bni" onclick="switchScreen('settings')"><span class="ico">⚙️</span><span>MORE</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ ADITYA AI ═══════════ -->
+  <div class="screen" id="s-aditya">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px 12px;">
+      <div>
+        <div style="font-size:22px;font-weight:800;color:var(--text);">Aditya <span style="color:var(--aditya);">AI</span></div>
+        <div style="font-size:11px;color:var(--aditya);font-family:var(--mono);">Security Intelligence Assistant</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div class="aditya-pulse"></div>
+        <span style="font-size:11px;color:var(--safe);font-family:var(--mono);">Online</span>
+      </div>
+    </div>
+
+    <div class="glow-line" style="background:linear-gradient(90deg,transparent,rgba(167,139,250,0.5),transparent);"></div>
+
+    <!-- Chat area -->
+    <div class="scroll" id="chatScroll" style="padding:8px 0 16px;">
+      <div class="chat-wrap" id="chatMessages">
+
+        <!-- AI greeting -->
+        <div style="display:flex;gap:10px;align-items:flex-end;">
+          <div class="aditya-avatar" style="width:32px;height:32px;border-radius:10px;font-size:16px;">🤖</div>
+          <div class="bubble-ai">
+            <div class="bubble-text">Namaste! Main <strong style="color:var(--aditya);">Aditya</strong> hun — aapka personal security AI. 🛡️<br><br>Aaj maine <strong>2 phishing threats</strong> detect kiye hain. Kya main explain karun?</div>
+            <div class="bubble-time">9:41 AM</div>
+          </div>
+        </div>
+
+        <!-- User message -->
+        <div style="display:flex;justify-content:flex-end;">
+          <div class="bubble-user">
+            <div class="bubble-text">Haan, explain karo — simple words mein</div>
+            <div class="bubble-time" style="text-align:right;">9:41 AM</div>
+          </div>
+        </div>
+
+        <!-- AI detailed response -->
+        <div style="display:flex;gap:10px;align-items:flex-end;">
+          <div class="aditya-avatar" style="width:32px;height:32px;border-radius:10px;font-size:16px;">🤖</div>
+          <div class="bubble-ai">
+            <div class="bubble-text">
+              <strong style="color:var(--danger);">🚨 Threat 1 — Fake Bank Email</strong><br><br>
+              Ek email aaya jisme lika tha ki aapka bank account band ho raha hai. Lekin yeh email fake tha kyunki:<br><br>
+              • Address tha "<span style="color:var(--danger);">paypa1.com</span>" — real PayPal nahi<br>
+              • Bohot urgent language thi — "immediately", "now"<br>
+              • Link ek nayi website pe ja rahi thi — sirf 2 din purani!<br><br>
+              <strong style="color:var(--safe);">✓ Maine isko block kar diya.</strong>
+            </div>
+            <div class="bubble-time">9:41 AM</div>
+          </div>
+        </div>
+
+        <!-- Quick replies -->
+        <div style="padding:0 0 4px 42px;display:flex;flex-wrap:wrap;gap:6px;">
+          <button onclick="sendQuickReply(this,'Dusra threat batao')" style="padding:6px 12px;border-radius:20px;border:1px solid rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);color:var(--aditya);font-size:11px;cursor:pointer;font-family:var(--sans);">Dusra threat batao</button>
+          <button onclick="sendQuickReply(this,'Full report chahiye')" style="padding:6px 12px;border-radius:20px;border:1px solid rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);color:var(--aditya);font-size:11px;cursor:pointer;font-family:var(--sans);">Full report chahiye</button>
+          <button onclick="sendQuickReply(this,'Safe rahne ke tips do')" style="padding:6px 12px;border-radius:20px;border:1px solid rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);color:var(--aditya);font-size:11px;cursor:pointer;font-family:var(--sans);">Safe tips do</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat input -->
+    <div style="padding:10px 16px 12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;background:var(--s1);">
+      <input id="chatInput" type="text" placeholder="Aditya se kuch pucho..." style="flex:1;background:var(--s3);border:1px solid var(--border);border-radius:12px;padding:10px 14px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;" onkeypress="if(event.key==='Enter')sendChat()"/>
+      <button onclick="sendChat()" style="width:40px;height:40px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--aditya2),var(--aditya));color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">→</button>
+    </div>
+
+    <div class="bnav">
+      <div class="bni" onclick="switchScreen('home')"><span class="ico">📊</span><span>HOME</span></div>
+      <div class="bni" onclick="switchScreen('scan')"><span class="ico">🔍</span><span>SCAN</span></div>
+      <div class="bni active" onclick="switchScreen('aditya')"><span class="ico">🤖</span><span>ADITYA</span></div>
+      <div class="bni" onclick="switchScreen('senior')"><span class="ico">👴</span><span>SENIOR</span></div>
+      <div class="bni" onclick="switchScreen('settings')"><span class="ico">⚙️</span><span>MORE</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SENIOR MODE ═══════════ -->
+  <div class="screen" id="s-senior">
+    <div class="scroll" style="padding-bottom:20px;">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px 12px;">
+        <div style="font-size:22px;font-weight:800;color:var(--text);">Senior <span style="color:var(--senior);">Mode</span></div>
+        <div class="senior-toggle" id="seniorToggle" onclick="toggleSenior()"></div>
+      </div>
+
+      <div class="glow-line" style="background:linear-gradient(90deg,transparent,rgba(251,146,60,0.5),transparent);"></div>
+
+      <!-- Senior mode card -->
+      <div class="senior-card" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <span style="font-size:36px;">👴👵</span>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--text);">Senior Citizen Mode</div>
+            <div style="font-size:12px;color:var(--muted);">Bade font · Simple language · Loud alerts</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:rgba(251,146,60,0.1);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:22px;">🔤</div>
+            <div style="font-size:11px;color:var(--text);font-weight:600;margin-top:4px;">Bada Font</div>
+          </div>
+          <div style="background:rgba(251,146,60,0.1);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:22px;">🔊</div>
+            <div style="font-size:11px;color:var(--text);font-weight:600;margin-top:4px;">Tez Awaaz</div>
+          </div>
+          <div style="background:rgba(251,146,60,0.1);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:22px;">🇮🇳</div>
+            <div style="font-size:11px;color:var(--text);font-weight:600;margin-top:4px;">Hindi Mode</div>
+          </div>
+          <div style="background:rgba(251,146,60,0.1);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:22px;">📵</div>
+            <div style="font-size:11px;color:var(--text);font-weight:600;margin-top:4px;">Auto Block</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOS Button -->
+      <div style="margin:0 20px 16px;">
+        <button class="sos-btn" onclick="alert('Emergency alert sent to all 3 contacts!')">🆘 SOS — Emergency Alert</button>
+      </div>
+
+      <!-- Emergency Numbers -->
+      <div class="sec-title" style="padding:0 20px;margin-bottom:10px;">EMERGENCY CONTACTS (max 5)</div>
+      <div style="padding:0 20px;" id="emerList">
+        <div class="emer-card">
+          <span style="font-size:20px;">👨‍👩‍👧</span>
+          <div class="emer-num">+91 98765 43210</div>
+          <div style="font-size:11px;color:var(--muted);margin-right:8px;">Beta</div>
+          <button class="call-btn">📞 Call</button>
+        </div>
+        <div class="emer-card">
+          <span style="font-size:20px;">👧</span>
+          <div class="emer-num">+91 87654 32109</div>
+          <div style="font-size:11px;color:var(--muted);margin-right:8px;">Beti</div>
+          <button class="call-btn">📞 Call</button>
+        </div>
+        <div class="emer-card" style="border-style:dashed;cursor:pointer;" onclick="alert('Add emergency number')">
+          <span style="font-size:20px;">➕</span>
+          <div style="font-size:13px;color:var(--muted);flex:1;">Add Emergency Number</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);">3 more slots</div>
+        </div>
+      </div>
+
+      <!-- Alert settings for senior -->
+      <div class="sec-title" style="padding:12px 20px 8px 20px;">ALERT SETTINGS</div>
+      <div style="padding:0 20px 8px;">
+        <div class="set-row">
+          <span style="font-size:20px;">🔊</span>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Tez Awaaz Alert</div>
+            <div style="font-size:11px;color:var(--muted);">Maximum volume pe beep bajegi</div>
+          </div>
+          <div class="senior-toggle" onclick="this.classList.toggle('off')"></div>
+        </div>
+        <div class="set-row">
+          <span style="font-size:20px;">📳</span>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Strong Vibration</div>
+            <div style="font-size:11px;color:var(--muted);">Phone kaafi zyada vibrate karega</div>
+          </div>
+          <div class="senior-toggle" onclick="this.classList.toggle('off')"></div>
+        </div>
+        <div class="set-row">
+          <span style="font-size:20px;">👨‍👩‍👧</span>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Family Ko Alert</div>
+            <div style="font-size:11px;color:var(--muted);">Threat pe family ko SMS milega</div>
+          </div>
+          <div class="senior-toggle" onclick="this.classList.toggle('off')"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bnav">
+      <div class="bni" onclick="switchScreen('home')"><span class="ico">📊</span><span>HOME</span></div>
+      <div class="bni" onclick="switchScreen('scan')"><span class="ico">🔍</span><span>SCAN</span></div>
+      <div class="bni" onclick="switchScreen('aditya')"><span class="ico">🤖</span><span>ADITYA</span></div>
+      <div class="bni active" onclick="switchScreen('senior')"><span class="ico">👴</span><span>SENIOR</span></div>
+      <div class="bni" onclick="switchScreen('settings')"><span class="ico">⚙️</span><span>MORE</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SETTINGS / MORE ═══════════ -->
+  <div class="screen" id="s-settings">
+    <div class="scroll" style="padding-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px 12px;">
+        <div style="font-size:22px;font-weight:800;color:var(--text);">Settings</div>
+        <div class="premium-badge">✦ PRO v1.0</div>
+      </div>
+
+      <div class="glow-line"></div>
+
+      <!-- Protection -->
+      <div class="sec-title" style="padding:0 20px;margin-bottom:10px;">PROTECTION</div>
+      <div style="padding:0 20px 4px;">
+        <div class="set-row"><span style="font-size:18px;">📱</span><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">Auto-scan SMS</div><div style="font-size:11px;color:var(--muted);">Incoming messages auto-check</div></div><div class="senior-toggle" onclick="this.classList.toggle('off')"></div></div>
+        <div class="set-row"><span style="font-size:18px;">🔗</span><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">URL Interceptor</div><div style="font-size:11px;color:var(--muted);">Links check before opening</div></div><div class="senior-toggle" onclick="this.classList.toggle('off')"></div></div>
+        <div class="set-row"><span style="font-size:18px;">🤖</span><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">Aditya AI Cloud</div><div style="font-size:11px;color:var(--muted);">Deep NLP analysis enabled</div></div><div class="senior-toggle" onclick="this.classList.toggle('off')"></div></div>
+        <div class="set-row"><span style="font-size:18px;">📍</span><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">Location Shield</div><div style="font-size:11px;color:var(--muted);">Region-specific threat alerts</div></div><div class="senior-toggle" onclick="this.classList.toggle('off')" style="background:var(--safe);"></div></div>
+      </div>
+
+      <!-- Language -->
+      <div class="sec-title" style="padding:12px 20px 8px;">LANGUAGE / भाषा</div>
+      <div style="padding:0 20px 4px;">
+        <div class="set-row">
+          <span style="font-size:18px;">🌐</span>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">App Language</div></div>
+          <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLang('EN');document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">EN</button>
+            <button class="lang-btn" onclick="setLang('HI');document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">हि</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="sec-title" style="padding:12px 20px 8px;">ABOUT</div>
+      <div style="margin:0 20px;background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center;">
+        <div style="font-size:24px;font-weight:800;margin-bottom:4px;">
+          Phish<span style="color:var(--accent)">Guard</span>
+        </div>
+        <div style="font-size:12px;color:var(--aditya);margin-bottom:2px;">Powered by Aditya AI</div>
+        <div style="font-size:12px;color:var(--muted);">by Chilyan's Technology</div>
+        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:8px;">v1.0.0 · Build 2026</div>
+      </div>
+    </div>
+
+    <div class="bnav">
+      <div class="bni" onclick="switchScreen('home')"><span class="ico">📊</span><span>HOME</span></div>
+      <div class="bni" onclick="switchScreen('scan')"><span class="ico">🔍</span><span>SCAN</span></div>
+      <div class="bni" onclick="switchScreen('aditya')"><span class="ico">🤖</span><span>ADITYA</span></div>
+      <div class="bni" onclick="switchScreen('senior')"><span class="ico">👴</span><span>SENIOR</span></div>
+      <div class="bni active" onclick="switchScreen('settings')"><span class="ico">⚙️</span><span>MORE</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let currentLang = 'EN';
+
+function switchScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s-' + name).classList.add('active');
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === (lang === 'EN' ? 'EN' : 'हि'));
+  });
+  const preview = document.getElementById('aditya-preview');
+  if(lang === 'HI') {
+    preview.innerHTML = '"Aaj 2 phishing attempts pakde gaye. Ek SMS mein fake bank link tha. <span style="color:var(--aditya);">Poori report dekhne ke liye tap karein →</span>"';
+  } else {
+    preview.innerHTML = '"Today 2 phishing attempts detected. One SMS had a fake bank link. <span style="color:var(--aditya);">Tap to see full report →</span>"';
+  }
+}
+
+function setActiveCh(el) {
+  document.querySelectorAll('.ch').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── Phishing analysis engine ──
+const BRANDS = ['paypal','amazon','google','microsoft','apple','facebook','netflix','chase','bank'];
+const BAD_TLDS = ['.xyz','.top','.tk','.ml','.pw','.click'];
+const URGENCY = [/\b(urgent|immediately|act now|suspended|expires|limited time)\b/i,/\b(verify|confirm|update your)\b/i,/\b(won|prize|reward|congratulation)\b/i,/\b(ssn|social security|tax refund)\b/i];
+const CREDS = [/\b(enter your|provide your)\s+(password|pin|otp)\b/i,/\b(credit card|card number|cvv)\b/i];
+
+function lev(a,b){if(!a.length)return b.length;if(!b.length)return a.length;let p=Array.from({length:b.length+1},(_,i)=>i);for(let i=0;i<a.length;i++){let c=[i+1];for(let j=0;j<b.length;j++)c.push(Math.min(p[j]+(a[i]!==b[j]?1:0),c[j]+1,p[j+1]+1));p=c;}return p[b.length];}
+function exDomain(url){return url.toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').split(/[/?]/)[0];}
+
+function analyzeInput(text) {
+  const reasons=[]; let score=0; const low=text.toLowerCase();
+  const urls=(text.match(/https?:\/\/[^\s]+|www\.[^\s]+/g)||[]);
+  for(const url of urls.slice(0,3)){
+    const domain=exDomain(url);
+    if(/https?:\/\/\d{1,3}/.test(url)){score+=35;reasons.push({t:'IP address in URL — hackers often hide behind raw IPs',s:'high'});}
+    const base=domain.replace(/\.[a-z]{2,}$/,'').replace(/[01@]/g,c=>({0:'o',1:'l','@':'a'}[c]));
+    for(const brand of BRANDS){if(lev(base,brand)>0&&lev(base,brand)<=2){score+=45;reasons.push({t:`Domain '${domain}' is imitating '${brand}.com'`,s:'high'});break;}}
+    for(const tld of BAD_TLDS){if(domain.endsWith(tld)){score+=15;reasons.push({t:`Suspicious TLD '${tld}' — commonly used in scams`,s:'medium'});break;}}
+    if(!url.startsWith('https')){score+=10;reasons.push({t:'No HTTPS — connection is not secure',s:'medium'});}
+    if(/bit\.ly|tinyurl|t\.co/.test(domain)){score+=18;reasons.push({t:'Shortened URL hiding the real destination',s:'medium'});}
+  }
+  const uh=URGENCY.filter(p=>p.test(low)).length;
+  if(uh>0){score+=Math.min(uh*14,42);reasons.push({t:'Urgency/pressure language detected — classic scam tactic',s:uh>1?'high':'medium'});}
+  if(CREDS.some(p=>p.test(low))){score+=40;reasons.push({t:'Asking for passwords/credentials — NEVER share these',s:'high'});}
+  if(reasons.length===0){reasons.push({t:'No suspicious patterns detected',s:'low'});reasons.push({t:'Domain and content appear legitimate',s:'low'});}
+  score=Math.min(score,100);
+  const verdict=score>=60?'malicious':score>=25?'suspicious':'safe';
+  const conf=Math.round(50+Math.abs(score-50)*0.9);
+  return{score,verdict,conf,reasons};
+}
+
+function doScan() {
+  const input=document.getElementById('scanInput').value.trim();
+  if(!input){document.getElementById('scanInput').style.borderColor='var(--danger)';setTimeout(()=>document.getElementById('scanInput').style.borderColor='',1200);return;}
+  hideResult();
+  const btn=document.getElementById('scanBtn');
+  const prog=document.getElementById('progWrap');
+  const fill=document.getElementById('progFill');
+  const lbl=document.getElementById('progLbl');
+  const steps=['Extracting features...','Checking blocklists...','Running AI model...','Consulting Aditya...','Generating report...'];
+  btn.disabled=true; btn.textContent='⏳ ANALYZING...';
+  prog.style.display='block';
+  let pct=0,step=0;
+  const iv=setInterval(()=>{
+    pct+=Math.random()*22+8; if(pct>100)pct=100;
+    fill.style.width=pct+'%';
+    if(step<steps.length)lbl.textContent=steps[step++];
+    if(pct>=100){
+      clearInterval(iv); prog.style.display='none'; fill.style.width='0%';
+      btn.disabled=false; btn.textContent='⚡ ANALYZE THREAT';
+      showResult(analyzeInput(input));
+    }
+  },220);
+}
+
+function showResult(r) {
+  const panel=document.getElementById('resultPanel');
+  const colors={malicious:'var(--danger)',suspicious:'var(--warn)',safe:'var(--safe)'};
+  const icons={malicious:'🚨',suspicious:'⚠️',safe:'✅'};
+  panel.className='result-panel '+r.verdict+' show';
+  document.getElementById('rIcon').textContent=icons[r.verdict];
+  document.getElementById('rVerdict').textContent=r.verdict.toUpperCase();
+  document.getElementById('rVerdict').style.color=colors[r.verdict];
+  document.getElementById('rConf').textContent=r.conf+'%';
+  document.getElementById('rConf').style.color=colors[r.verdict];
+  document.getElementById('riskVal').textContent=r.score+'/100';
+  document.getElementById('riskVal').style.color=colors[r.verdict];
+  document.getElementById('riskFill').style.background=colors[r.verdict];
+  setTimeout(()=>document.getElementById('riskFill').style.width=r.score+'%',100);
+  const sevColors={high:'var(--danger)',medium:'var(--warn)',low:'var(--safe)'};
+  document.getElementById('reasonsList').innerHTML=r.reasons.map(rs=>`
+    <div style="display:flex;gap:8px;align-items:flex-start;padding:9px 10px;background:rgba(255,255,255,0.025);border-radius:8px;">
+      <span style="color:var(--accent);font-family:var(--mono);font-size:12px;flex-shrink:0;">→</span>
+      <span style="font-size:12px;color:var(--text);flex:1;line-height:1.4;">${rs.t}</span>
+      <span style="font-size:8px;font-weight:700;padding:2px 5px;border-radius:4px;font-family:var(--mono);background:${sevColors[rs.s]}22;color:${sevColors[rs.s]};flex-shrink:0;">${rs.s.toUpperCase()}</span>
+    </div>`).join('');
+}
+
+function hideResult(){document.getElementById('resultPanel').className='result-panel';}
+
+// ── Aditya AI Chat ──
+const adityaReplies = {
+  'dusra threat batao': `<strong style="color:var(--warn);">⚠️ Threat 2 — Prize SMS</strong><br><br>Ek SMS aaya ki "aapne ₹50,000 jeete hain". Yeh scam hai kyunki:<br><br>• Kisi bhi lottery mein aapne participate nahi kiya<br>• Link ek nayee website pe tha — sirf 3 din purani<br>• Aapka personal info maangna chahte the<br><br><strong style="color:var(--safe);">✓ Maine isko block kar diya.</strong>`,
+  'full report chahiye': `📊 <strong>Aaj ki Full Security Report:</strong><br><br>• Total scanned: <strong style="color:var(--accent);">142</strong> messages<br>• Blocked: <strong style="color:var(--danger);">7</strong> malicious<br>• Warnings: <strong style="color:var(--warn);">3</strong> suspicious<br>• Protection score: <strong style="color:var(--safe);">87/100</strong><br><br>Aap <strong>safe</strong> hain. Keep it up! 💪`,
+  'safe tips do': `🛡️ <strong>Top 5 Safety Tips:</strong><br><br>1. Kisi bhi unknown link pe click mat karo<br>2. Bank kabhi phone pe OTP nahi maangta<br>3. "Free prize" wale messages always fake hote hain<br>4. Apne family ko bhi batao in scams ke baare mein<br>5. PhishGuard ko ON rakhein hamesha ✅`,
+};
+
+function sendQuickReply(btn, text) {
+  btn.style.opacity='0.5'; btn.disabled=true;
+  addUserBubble(text);
+  showTyping();
+  const key=text.toLowerCase().replace(/[^a-z ]/g,'').trim();
+  const reply=adityaReplies[key]||`Main samajh gaya. Iske baare mein research kar raha hun... 🔍`;
+  setTimeout(()=>{ removeTyping(); addAIBubble(reply); },1400);
+}
+
+function sendChat() {
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  addUserBubble(text);
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    const responses=['Bahut accha sawal! Is baare mein aapko batata hun... Phishing attacks mein hackers aapko urgent messages bhejte hain taaki aap bina soche link pe click kar lein. Hamesha sender ka address check karein. ✅','Theek hai! Yaad rakhein — koi bhi asli bank ya company kabhi aapka password ya OTP nahi maangti. Agar koi maange toh woh 100% scam hai. 🛡️','Great question! Location feature se hum aapke area ke specific threats track karte hain. Gorakhpur mein abhi kuch SMS scams report hue hain — main aapko protect kar raha hun. 📍'];
+    addAIBubble(responses[Math.floor(Math.random()*responses.length)]);
+  },1600);
+}
+
+function addUserBubble(text){
+  const msgs=document.getElementById('chatMessages');
+  const d=document.createElement('div');
+  d.style.cssText='display:flex;justify-content:flex-end;';
+  d.innerHTML=`<div class="bubble-user"><div class="bubble-text">${text}</div><div class="bubble-time" style="text-align:right;">Just now</div></div>`;
+  msgs.appendChild(d);
+  document.getElementById('chatScroll').scrollTop=99999;
+}
+
+function addAIBubble(text){
+  const msgs=document.getElementById('chatMessages');
+  const d=document.createElement('div');
+  d.style.cssText='display:flex;gap:10px;align-items:flex-end;';
+  d.innerHTML=`<div class="aditya-avatar" style="width:32px;height:32px;border-radius:10px;font-size:16px;">🤖</div><div class="bubble-ai"><div class="bubble-text">${text}</div><div class="bubble-time">Just now</div></div>`;
+  msgs.appendChild(d);
+  document.getElementById('chatScroll').scrollTop=99999;
+}
+
+function showTyping(){
+  const msgs=document.getElementById('chatMessages');
+  const d=document.createElement('div');
+  d.id='typingBubble'; d.style.cssText='display:flex;gap:10px;align-items:flex-end;';
+  d.innerHTML=`<div class="aditya-avatar" style="width:32px;height:32px;border-radius:10px;font-size:16px;">🤖</div><div class="bubble-ai"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(d);
+  document.getElementById('chatScroll').scrollTop=99999;
+}
+function removeTyping(){const t=document.getElementById('typingBubble');if(t)t.remove();}
+
+function adityaExplain(){
+  switchScreen('aditya');
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addAIBubble(`<strong style="color:var(--danger);">🚨 Is threat ka explanation:</strong><br><br>Jo content aapne scan kiya woh ek <strong>phishing attempt</strong> tha. Scammer ne:<br><br>• Ek famous brand ka naam use kiya fake domain mein<br>• Urgent language dali taaki aap jaldi se click karein<br>• Aapki personal info churane ki koshish ki<br><br><strong style="color:var(--safe);">Main hamesha aapko protect karta rahunga! 🛡️</strong>`);
+  },1500);
+}
+
+function toggleSenior(){
+  document.getElementById('seniorToggle').classList.toggle('off');
+}
+</script>
+</body>
+</html>
