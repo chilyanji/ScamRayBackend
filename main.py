@@ -1,17 +1,3 @@
-# ═══════════════════════════════════════════════════════════
-#  ScamRay BACKEND - main.py
-#  Run this on your PC while testing the Android app.
-#
-#  HOW TO RUN:
-#  1. Install Python (python.org)
-#  2. Open terminal/command prompt in this folder
-#  3. Run: pip install fastapi uvicorn
-#  4. Run: python main.py
-#  5. Server starts at http://localhost:8000
-#
-#  The Android Emulator reaches this at: http://10.0.2.2:8000
-# ═══════════════════════════════════════════════════════════
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -229,8 +215,3 @@ if __name__ == "__main__":
     print("📱  Emulator: http://10.0.2.2:8000")
     print("📄  API Docs: http://localhost:8000/docs\n")
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
-
-    #     pip install fastapi uvicorn
-    #    python main.py
